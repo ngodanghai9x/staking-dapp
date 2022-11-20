@@ -2,48 +2,57 @@
 pragma solidity >=0.8.17 <0.9.0;
 
 contract StakePool {
-  // state variables
-  address seller;
-  address buyer;
-  string name;
-  string description;
-  uint256 price;
+    struct Staker {
+        string balance; // float, total deposit
+        uint256 depositTimestamp;
+        uint256 apy; // percent
+        uint256 apyTerm; // months
+    }
 
-  constructor() public {
-  }
+    // state variables
+    mapping(address => Staker) public stakers;
 
-  event LogSellArticle(
-    address indexed seller,
-    string name,
-    uint256 price
-  );
+    // constructor() public {}
 
-  // sell an article
-  function sellArticle(string memory _name, string memory _description, uint256 _price) public {
-    // require(
-    //   msg.sender == seller,
-    //   "Only seller can call this."
-    // );
-    // string memory sellerStr =  string(abi.encodePacked(msg.sender));
-    // _description = sellerStr;
+    event Deposit(
+        address indexed _staker,
+        string _balance,
+        uint256 _depositTimestamp,
+        uint256 _apy,
+        uint256 _apyTerm
+    );
 
-    seller = msg.sender;
-    buyer = address(0);
-    name = _name;
-    description = _description;
-    price = _price;
+    // stake1, 3, 9 tháng
+    // stake1 là 3%, stake3 là 10%, stake 9 là 50% nh
+    function deposit(
+        string memory _balance,
+        uint256 _depositTimestamp,
+        uint256 _apy,
+        uint256 _apyTerm
+    ) public {
+        // stakers[msg.sender] = Staker("2.3", 1668928830000, 10, 3);
+        stakers[msg.sender] = Staker(
+            _balance,
+            _depositTimestamp,
+            _apy,
+            _apyTerm
+        );
+        emit Deposit(msg.sender, _balance, _depositTimestamp, _apy, _apyTerm);
+    }
 
-    emit LogSellArticle(seller, name, price);
-  }
+    //  function setUser(uint _idUser) public {
+    //     users[_idUser]._user_id = 0;
+    //     users[_idUser]._name = 0x7465737400000000000000000000000000000000000000000000000000000000;
+    //     users[_idUser]._address = 0x5B38Da6a701c568545dCfcB03FcB870000000000000000000000000000000000;
+    //     users[_idUser]._birth_day = 0xf711600000000000000000000000000000000000000000000000000000000000;
+    // }
 
-  // get an article
-  function getArticle() public view returns (
-    address _seller,
-    address _buyer,
-    string memory _name,
-    string memory _description,
-    uint256 _price
-  ) {
-      return(seller, buyer, name, description, price);
-  }
+    function getStakerInfo(address _staker)
+        public
+        view
+        returns (Staker memory)
+    {
+        _staker = msg.sender;
+        return stakers[_staker];
+    }
 }
