@@ -14,13 +14,15 @@ truffle console --network ganache
 accounts[1]
 accounts[2]
 StakePool.address
+await web3.utils.fromWei(web3.utils.toBN(await web3.eth.getBalance(StakePool.address)), "ether")
 await web3.utils.fromWei(web3.utils.toBN(await web3.eth.getBalance(accounts[1])), "ether")
 await web3.utils.fromWei(web3.utils.toBN(await web3.eth.getBalance(accounts[2])), "ether")
 
 let app = await StakePool.deployed()
 
-app.deposit("2.3", 1668928830000, 10, 3, {from: accounts[1]})
+app.deposit(1668928830000, 10, 3, { from: accounts[1], value: web3.utils.toWei('2.3', "ether"), gas: 500000 })
 app.getStakerInfo(accounts[1], {from: accounts[1]})
+app.getPoolInfo({from: accounts[1]})
 
 var logEvent = app.LogSellArticle({}, {}).watch(function (error, event) { console.log("🚀 event", event) })
 ```
