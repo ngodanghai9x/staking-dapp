@@ -23,6 +23,7 @@ function App() {
     const web3Provider = new Web3.providers.HttpProvider("http://localhost:7545");
     const web3 = new Web3(web3Provider);
     const contact = new web3.eth.Contract(StakePoolJson.abi as any, StakePoolJson.networks[5777].address as string);
+    console.log("🚀 ~ file: App.tsx ~ line 26 ~ main ~ contact", contact)
     const myAddress = "0xE004C4343d085298ec5D0E8aBc443445c25b1D23";
   
     const res = await contact.methods
