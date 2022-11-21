@@ -15,15 +15,18 @@ accounts[1]
 accounts[2]
 StakePool.address
 await web3.utils.fromWei(web3.utils.toBN(await web3.eth.getBalance(StakePool.address)), "ether")
+await web3.utils.fromWei(web3.utils.toBN(await web3.eth.getBalance(accounts[0])), "ether")
 await web3.utils.fromWei(web3.utils.toBN(await web3.eth.getBalance(accounts[1])), "ether")
 await web3.utils.fromWei(web3.utils.toBN(await web3.eth.getBalance(accounts[2])), "ether")
 
 let app = await StakePool.deployed()
 
-app.deposit(1668928830000, 10, 3, { from: accounts[1], value: web3.utils.toWei('2.3', "ether"), gas: 500000 })
-app.getStakerInfo(accounts[1], {from: accounts[1]})
-app.setPoolStatus(0, {from: accounts[2]})
-app.getPoolInfo({from: accounts[1]}).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
+app.deposit(Math.floor(Date.now() / 1000), 10, 3, { from: accounts[1], value: web3.utils.toWei('2.3', "ether"), gas: 500000 })
+app.getStakerInfo(accounts[1], { from: accounts[1] })
+
+app.getPoolInfo({ from: accounts[1] }).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
+app.setPoolStatus(0, { from: accounts[2] })
+app.letScamAndRun({ from: accounts[0] })
 
 var logEvent = app.LogSellArticle({}, {}).watch(function (error, event) { console.log("🚀 event", event) })
 ```
