@@ -1,0 +1,531 @@
+truffle(develop)> migrate --compile-all --reset
+
+Compiling your contracts...
+===========================
+> Compiling .\contracts\ScammerAdmin.sol
+> Compiling .\contracts\StakePool.sol
+> Artifacts written to G:\Github Repo\staking-dapp\public\truffle\build\contracts
+> Compiled successfully using:
+   - solc: 0.8.17+commit.8df45f5f.Emscripten.clang
+
+
+Starting migrations...
+======================
+> Network name:    'develop'
+> Network id:      5777
+> Block gas limit: 6721975 (0x6691b7)
+
+
+1668922869_stake_pool.js
+========================
+
+   Replacing 'StakePool'
+   ---------------------
+   > transaction hash:    0x08ab4b7c2c85871cb3d07d3cdc25a8c62022cf395cb520f9c53e5ae755c1f8ac
+   > Blocks: 0            Seconds: 0
+   > contract address:    0x408131a63516c01a9c87150DA7AC1493805c0A0c
+   > block number:        1
+   > block timestamp:     1669042573
+   > account:             0x081017C48E3aBe3c0B4E7d302e26544292F5B2a2
+   > balance:             99.99703177525
+   > gas used:            879474 (0xd6b72)
+   > gas price:           3.375 gwei
+   > value sent:          0 ETH
+   > total cost:          0.00296822475 ETH
+
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:       0.00296822475 ETH
+
+Summary
+=======
+> Total deployments:   1
+> Final cost:          0.00296822475 ETH
+
+
+truffle(develop)> let app = await StakePool.deployed()
+undefined
+truffle(develop)> app.getStakerInfo(accounts[1], { from: accounts[1] })
+[
+  '0',
+  '0',
+  '0',
+  '0',
+  balance: '0',
+  depositTimestamp: '0',
+  apy: '0',
+  apyTerm: '0'
+]
+truffle(develop)> app.deposit(Math.floor(Date.now() / 1000), 10, 3, { from: accounts[1], value: web3.utils.toWei('2.3', "ether"), gas: 500000 })
+{
+  tx: '0x9fc493280c5ac7ac856a3ec83a1b02f450d0182a57668f3e927c934bf860ca1e',
+  receipt: {
+    transactionHash: '0x9fc493280c5ac7ac856a3ec83a1b02f450d0182a57668f3e927c934bf860ca1e',
+    transactionIndex: 0,
+    blockNumber: 2,
+    blockHash: '0xd2d5e145723a2a715495c1858b8dfda46cc7a92e94034f768af0a816e72787b3',
+    from: '0x1bebba6a2b3f6091ea231a93c59f7c5f68d8ed35',
+    to: '0x408131a63516c01a9c87150da7ac1493805c0a0c',
+    cumulativeGasUsed: 113558,
+    gasUsed: 113558,
+    contractAddress: null,
+    logs: [ [Object] ],
+    logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000000800000000000008000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000040000000000000000000000000200000000000000',
+    status: true,
+    effectiveGasPrice: 3294245304,
+    type: '0x2',
+    rawLogs: [ [Object] ]
+  },
+  logs: [
+    {
+      address: '0x408131a63516c01a9c87150DA7AC1493805c0A0c',
+      blockHash: '0xd2d5e145723a2a715495c1858b8dfda46cc7a92e94034f768af0a816e72787b3',
+      blockNumber: 2,
+      logIndex: 0,
+      removed: false,
+      transactionHash: '0x9fc493280c5ac7ac856a3ec83a1b02f450d0182a57668f3e927c934bf860ca1e',
+      transactionIndex: 0,
+      id: 'log_0c3f773b',
+      event: 'Deposit',
+      args: [Result]
+    }
+  ]
+}
+truffle(develop)> app.getStakerInfo(accounts[1], { from: accounts[1] })
+[
+  '2300000000000000000',
+  '1669042589',
+  '10',
+  '3',
+  balance: '2300000000000000000',
+  depositTimestamp: '1669042589',
+  apy: '10',
+  apyTerm: '3'
+]
+truffle(develop)> app.getPoolInfo({ from: accounts[1] }).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
+Uncaught:
+Error: Returned error: VM Exception while processing transaction: revert You are not admin payable
+    at evalmachine.<anonymous>
+    at sigintHandlersWrap (node:vm:268:12)
+    at Script.runInContext (node:vm:137:14)
+    at runScript (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:454:1)
+    at Console.interpret (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:469:1)
+    at bound (node:domain:421:15)
+    at REPLServer.runBound [as eval] (node:domain:432:12)
+    at REPLServer.onLine (node:repl:889:10)
+    at REPLServer.emit (node:events:390:28)
+    at REPLServer.emit (node:domain:475:12)
+    at REPLServer.Interface._onLine (node:readline:487:10)
+    at REPLServer.Interface._line (node:readline:864:8)
+    at REPLServer.Interface._ttyWrite (node:readline:1216:14)
+    at REPLServer.self._ttyWrite (node:repl:984:9)
+    at ReadStream.onkeypress (node:readline:288:10)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at emitKeys (node:internal/readline/utils:358:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:61:36)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at addChunk (node:internal/streams/readable:315:12)
+    at readableAddChunk (node:internal/streams/readable:289:9)
+    at ReadStream.Readable.push (node:internal/streams/readable:228:10)
+    at TTY.onStreamRead (node:internal/stream_base_commons:199:23) {
+  data: '0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000019596f7520617265206e6f742061646d696e2070617961626c6500000000000000',
+  hijackedStack: 'Error: Returned error: VM Exception while processing transaction: revert You are not admin payable\n' +
+    '    at Object.ErrorResponse (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-helpers\\lib\\errors.js:28:1)\n' +        
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-requestmanager\\lib\\index.js:300:1\n' +
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\packages\\provider\\wrapper.js:123:1\n' +
+    '    at XMLHttpRequest.request.onreadystatechange (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-providers-http\\lib\\index.js:98:1)\n' +
+    '    at XMLHttpRequestEventTarget.dispatchEvent (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request-event-target.js:34:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._setReadyState (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:208:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._onHttpResponseEnd (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:318:1)\n' +
+    '    at IncomingMessage.<anonymous> (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:289:48)\n' +
+    '    at IncomingMessage.emit (node:events:402:35)\n' +
+    '    at IncomingMessage.emit (node:domain:537:15)\n' +
+    '    at endReadableNT (node:internal/streams/readable:1343:12)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:83:21)'
+}
+truffle(develop)>
+undefined
+truffle(develop)> app.setPoolStatus(0, { from: accounts[2] })
+Uncaught:
+Error: Returned error: VM Exception while processing transaction: revert You are not admin payable -- Reason given: You are not admin payable.
+    at evalmachine.<anonymous>
+    at sigintHandlersWrap (node:vm:268:12)
+    at Script.runInContext (node:vm:137:14)
+    at runScript (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:454:1)
+    at Console.interpret (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:469:1)
+    at bound (node:domain:421:15)
+    at REPLServer.runBound [as eval] (node:domain:432:12)
+    at REPLServer.onLine (node:repl:889:10)
+    at REPLServer.emit (node:events:390:28)
+    at REPLServer.emit (node:domain:475:12)
+    at REPLServer.Interface._onLine (node:readline:487:10)
+    at REPLServer.Interface._line (node:readline:864:8)
+    at REPLServer.Interface._ttyWrite (node:readline:1216:14)
+    at REPLServer.self._ttyWrite (node:repl:984:9)
+    at ReadStream.onkeypress (node:readline:288:10)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at emitKeys (node:internal/readline/utils:358:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:61:36)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at addChunk (node:internal/streams/readable:315:12)
+    at readableAddChunk (node:internal/streams/readable:289:9)
+    at ReadStream.Readable.push (node:internal/streams/readable:228:10)
+    at TTY.onStreamRead (node:internal/stream_base_commons:199:23) {
+  data: {
+    hash: null,
+    programCounter: 2169,
+    result: '0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000019596f7520617265206e6f742061646d696e2070617961626c6500000000000000',
+    reason: 'You are not admin payable',
+    message: 'revert'
+  },
+  reason: 'You are not admin payable',
+  hijackedStack: 'Error: Returned error: VM Exception while processing transaction: revert You are not admin payable -- Reason given: You are not admin payable.\n' +
+    '    at Object.ErrorResponse (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-helpers\\lib\\errors.js:28:1)\n' +        
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-requestmanager\\lib\\index.js:300:1\n' +
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\packages\\provider\\wrapper.js:123:1\n' +
+    '    at XMLHttpRequest.request.onreadystatechange (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-providers-http\\lib\\index.js:98:1)\n' +
+    '    at XMLHttpRequestEventTarget.dispatchEvent (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request-event-target.js:34:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._setReadyState (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:208:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._onHttpResponseEnd (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:318:1)\n' +
+    '    at IncomingMessage.<anonymous> (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:289:48)\n' +
+    '    at IncomingMessage.emit (node:events:402:35)\n' +
+    '    at IncomingMessage.emit (node:domain:537:15)\n' +
+    '    at endReadableNT (node:internal/streams/readable:1343:12)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:83:21)'
+}
+truffle(develop)> app.getPoolInfo({ from: accounts[1] }).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
+Uncaught:
+Error: Returned error: VM Exception while processing transaction: revert You are not admin payable
+    at evalmachine.<anonymous>
+    at sigintHandlersWrap (node:vm:268:12)
+    at Script.runInContext (node:vm:137:14)
+    at runScript (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:454:1)
+    at Console.interpret (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:469:1)
+    at bound (node:domain:421:15)
+    at REPLServer.runBound [as eval] (node:domain:432:12)
+    at REPLServer.onLine (node:repl:889:10)
+    at REPLServer.emit (node:events:390:28)
+    at REPLServer.emit (node:domain:475:12)
+    at REPLServer.Interface._onLine (node:readline:487:10)
+    at REPLServer.Interface._line (node:readline:864:8)
+    at REPLServer.Interface._ttyWrite (node:readline:1216:14)
+    at REPLServer.self._ttyWrite (node:repl:984:9)
+    at ReadStream.onkeypress (node:readline:288:10)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at emitKeys (node:internal/readline/utils:358:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:61:36)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at addChunk (node:internal/streams/readable:315:12)
+    at readableAddChunk (node:internal/streams/readable:289:9)
+    at ReadStream.Readable.push (node:internal/streams/readable:228:10)
+    at TTY.onStreamRead (node:internal/stream_base_commons:199:23) {
+  data: '0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000019596f7520617265206e6f742061646d696e2070617961626c6500000000000000',
+  hijackedStack: 'Error: Returned error: VM Exception while processing transaction: revert You are not admin payable\n' +
+    '    at Object.ErrorResponse (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-helpers\\lib\\errors.js:28:1)\n' +        
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-requestmanager\\lib\\index.js:300:1\n' +
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\packages\\provider\\wrapper.js:123:1\n' +
+    '    at XMLHttpRequest.request.onreadystatechange (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-providers-http\\lib\\index.js:98:1)\n' +
+    '    at XMLHttpRequestEventTarget.dispatchEvent (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request-event-target.js:34:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._setReadyState (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:208:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._onHttpResponseEnd (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:318:1)\n' +
+    '    at IncomingMessage.<anonymous> (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:289:48)\n' +
+    '    at IncomingMessage.emit (node:events:402:35)\n' +
+    '    at IncomingMessage.emit (node:domain:537:15)\n' +
+    '    at endReadableNT (node:internal/streams/readable:1343:12)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:83:21)'
+}
+truffle(develop)> app.getPoolInfo({ from: accounts[1] }).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
+Uncaught:
+Error: Returned error: VM Exception while processing transaction: revert You are not admin payable
+    at evalmachine.<anonymous>
+    at sigintHandlersWrap (node:vm:268:12)
+    at Script.runInContext (node:vm:137:14)
+    at runScript (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:454:1)
+    at Console.interpret (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:469:1)
+    at bound (node:domain:421:15)
+    at REPLServer.runBound [as eval] (node:domain:432:12)
+    at REPLServer.onLine (node:repl:889:10)
+    at REPLServer.emit (node:events:390:28)
+    at REPLServer.emit (node:domain:475:12)
+    at REPLServer.Interface._onLine (node:readline:487:10)
+    at REPLServer.Interface._line (node:readline:864:8)
+    at REPLServer.Interface._ttyWrite (node:readline:1216:14)
+    at REPLServer.self._ttyWrite (node:repl:984:9)
+    at ReadStream.onkeypress (node:readline:288:10)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at emitKeys (node:internal/readline/utils:358:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:61:36)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at addChunk (node:internal/streams/readable:315:12)
+    at readableAddChunk (node:internal/streams/readable:289:9)
+    at ReadStream.Readable.push (node:internal/streams/readable:228:10)
+    at TTY.onStreamRead (node:internal/stream_base_commons:199:23) {
+  data: '0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000019596f7520617265206e6f742061646d696e2070617961626c6500000000000000',
+  hijackedStack: 'Error: Returned error: VM Exception while processing transaction: revert You are not admin payable\n' +
+    '    at Object.ErrorResponse (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-helpers\\lib\\errors.js:28:1)\n' +        
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-requestmanager\\lib\\index.js:300:1\n' +
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\packages\\provider\\wrapper.js:123:1\n' +
+    '    at XMLHttpRequest.request.onreadystatechange (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-providers-http\\lib\\index.js:98:1)\n' +
+    '    at XMLHttpRequestEventTarget.dispatchEvent (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request-event-target.js:34:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._setReadyState (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:208:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._onHttpResponseEnd (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:318:1)\n' +
+    '    at IncomingMessage.<anonymous> (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:289:48)\n' +
+    '    at IncomingMessage.emit (node:events:402:35)\n' +
+    '    at IncomingMessage.emit (node:domain:537:15)\n' +
+    '    at endReadableNT (node:internal/streams/readable:1343:12)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:83:21)'
+}
+truffle(develop)>
+undefined
+truffle(develop)> app.getPoolInfo({ from: accounts[1] }).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
+Uncaught:
+Error: Returned error: VM Exception while processing transaction: revert You are not admin payable
+    at evalmachine.<anonymous>
+    at sigintHandlersWrap (node:vm:268:12)
+    at Script.runInContext (node:vm:137:14)
+    at runScript (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:454:1)
+    at Console.interpret (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:469:1)
+    at bound (node:domain:421:15)
+    at REPLServer.runBound [as eval] (node:domain:432:12)
+    at REPLServer.onLine (node:repl:889:10)
+    at REPLServer.emit (node:events:390:28)
+    at REPLServer.emit (node:domain:475:12)
+    at REPLServer.Interface._onLine (node:readline:487:10)
+    at REPLServer.Interface._line (node:readline:864:8)
+    at REPLServer.Interface._ttyWrite (node:readline:1216:14)
+    at REPLServer.self._ttyWrite (node:repl:984:9)
+    at ReadStream.onkeypress (node:readline:288:10)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at emitKeys (node:internal/readline/utils:358:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:61:36)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at addChunk (node:internal/streams/readable:315:12)
+    at readableAddChunk (node:internal/streams/readable:289:9)
+    at ReadStream.Readable.push (node:internal/streams/readable:228:10)
+    at TTY.onStreamRead (node:internal/stream_base_commons:199:23) {
+  data: '0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000019596f7520617265206e6f742061646d696e2070617961626c6500000000000000',
+  hijackedStack: 'Error: Returned error: VM Exception while processing transaction: revert You are not admin payable\n' +
+    '    at Object.ErrorResponse (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-helpers\\lib\\errors.js:28:1)\n' +        
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-requestmanager\\lib\\index.js:300:1\n' +
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\packages\\provider\\wrapper.js:123:1\n' +
+    '    at XMLHttpRequest.request.onreadystatechange (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-providers-http\\lib\\index.js:98:1)\n' +
+    '    at XMLHttpRequestEventTarget.dispatchEvent (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request-event-target.js:34:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._setReadyState (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:208:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._onHttpResponseEnd (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:318:1)\n' +
+    '    at IncomingMessage.<anonymous> (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:289:48)\n' +
+    '    at IncomingMessage.emit (node:events:402:35)\n' +
+    '    at IncomingMessage.emit (node:domain:537:15)\n' +
+    '    at endReadableNT (node:internal/streams/readable:1343:12)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:83:21)'
+}
+truffle(develop)> app.getPoolInfo({ from: accounts[0] }).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
+Result {
+  '0': '0x081017C48E3aBe3c0B4E7d302e26544292F5B2a2',
+  '1': BN {
+    negative: 0,
+    words: [ 1, <1 empty item> ],
+    length: 1,
+    red: null
+  },
+  _admin: '0x081017C48E3aBe3c0B4E7d302e26544292F5B2a2',
+  _pStatus: 1
+}
+truffle(develop)> app.letScamAndRun({ from: accounts[0] })
+{
+  tx: '0x9c064bdd5b401d5f83cd916d6972c24759f4f61d0adcb1600e249a796b9aefc3',
+  receipt: {
+    transactionHash: '0x9c064bdd5b401d5f83cd916d6972c24759f4f61d0adcb1600e249a796b9aefc3',
+    transactionIndex: 0,
+    blockNumber: 3,
+    blockHash: '0xe572ddb2d15bf7319bd4584a2dc4388de101f6bcd927cf507e0534877a97871c',
+    from: '0x081017c48e3abe3c0b4e7d302e26544292f5b2a2',
+    to: '0x408131a63516c01a9c87150da7ac1493805c0a0c',
+    cumulativeGasUsed: 28697,
+    gasUsed: 28697,
+    contractAddress: null,
+    logs: [],
+    logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+    status: true,
+    effectiveGasPrice: 3198319047,
+    type: '0x2',
+    rawLogs: []
+  },
+  logs: []
+}
+truffle(develop)> app.getPoolInfo({ from: accounts[0] }).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
+Uncaught:
+Error: Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from, requesting data from a block number that does not exist, or querying a node which is not fully synced.
+    at evalmachine.<anonymous>
+    at sigintHandlersWrap (node:vm:268:12)
+    at Script.runInContext (node:vm:137:14)
+    at runScript (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:454:1)
+    at Console.interpret (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:469:1)
+    at bound (node:domain:421:15)
+    at REPLServer.runBound [as eval] (node:domain:432:12)
+    at REPLServer.onLine (node:repl:889:10)
+    at REPLServer.emit (node:events:390:28)
+    at REPLServer.emit (node:domain:475:12)
+    at REPLServer.Interface._onLine (node:readline:487:10)
+    at REPLServer.Interface._line (node:readline:864:8)
+    at REPLServer.Interface._ttyWrite (node:readline:1216:14)
+    at REPLServer.self._ttyWrite (node:repl:984:9)
+    at ReadStream.onkeypress (node:readline:288:10)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at emitKeys (node:internal/readline/utils:358:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:61:36)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at addChunk (node:internal/streams/readable:315:12)
+    at readableAddChunk (node:internal/streams/readable:289:9)
+    at ReadStream.Readable.push (node:internal/streams/readable:228:10)
+    at TTY.onStreamRead (node:internal/stream_base_commons:199:23) {
+  hijackedStack: "Error: Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from, requesting data from a block number that does not exist, or querying a node which is not fully synced.\n" +
+    '    at ABICoder.decodeParametersWith (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth-abi\\lib\\index.js:304:1)\n' +    
+    '    at ABICoder.decodeParameters (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth-abi\\lib\\index.js:291:1)\n' +        
+    '    at Contract._decodeMethodReturn (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth\\node_modules\\web3-eth-contract\\lib\\index.js:493:1)\n' +
+    '    at Method.outputFormatter (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth\\node_modules\\web3-eth-contract\\lib\\index.js:800:1)\n' +
+    '    at Method.formatOutput (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth\\node_modules\\web3-core-method\\lib\\index.js:148:1)\n' +
+    '    at sendTxCallback (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth\\node_modules\\web3-core-method\\lib\\index.js:531:1)\n' +
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-requestmanager\\lib\\index.js:305:1\n' +
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\packages\\provider\\wrapper.js:123:1\n' +
+    '    at XMLHttpRequest.request.onreadystatechange (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-providers-http\\lib\\index.js:98:1)\n' +
+    '    at XMLHttpRequestEventTarget.dispatchEvent (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request-event-target.js:34:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._setReadyState (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:208:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._onHttpResponseEnd (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:318:1)\n' +
+    '    at IncomingMessage.<anonymous> (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:289:48)\n' +
+    '    at IncomingMessage.emit (node:events:402:35)\n' +
+    '    at IncomingMessage.emit (node:domain:537:15)\n' +
+    '    at endReadableNT (node:internal/streams/readable:1343:12)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:83:21)'
+}
+truffle(develop)> app.getStakerInfo(accounts[1], { from: accounts[1] })
+Uncaught:
+Error: Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from, requesting data from a block number that does not exist, or querying a node which is not fully synced.
+    at evalmachine.<anonymous>
+    at sigintHandlersWrap (node:vm:268:12)
+    at Script.runInContext (node:vm:137:14)
+    at runScript (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:454:1)
+    at Console.interpret (C:\Users\MSI\AppData\Roaming\nvm\v16.13.1\node_modules\truffle\build\webpack:\packages\core\lib\console.js:469:1)
+    at bound (node:domain:421:15)
+    at REPLServer.runBound [as eval] (node:domain:432:12)
+    at REPLServer.onLine (node:repl:889:10)
+    at REPLServer.emit (node:events:390:28)
+    at REPLServer.emit (node:domain:475:12)
+    at REPLServer.Interface._onLine (node:readline:487:10)
+    at REPLServer.Interface._line (node:readline:864:8)
+    at REPLServer.Interface._ttyWrite (node:readline:1216:14)
+    at REPLServer.self._ttyWrite (node:repl:984:9)
+    at ReadStream.onkeypress (node:readline:288:10)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at emitKeys (node:internal/readline/utils:358:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:61:36)
+    at ReadStream.emit (node:events:390:28)
+    at ReadStream.emit (node:domain:475:12)
+    at addChunk (node:internal/streams/readable:315:12)
+    at readableAddChunk (node:internal/streams/readable:289:9)
+    at ReadStream.Readable.push (node:internal/streams/readable:228:10)
+    at TTY.onStreamRead (node:internal/stream_base_commons:199:23) {
+  hijackedStack: "Error: Returned values aren't valid, did it run Out of Gas? You might also see this error if you are not using the correct ABI for the contract you are retrieving data from, requesting data from a block number that does not exist, or querying a node which is not fully synced.\n" +
+    '    at ABICoder.decodeParametersWith (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth-abi\\lib\\index.js:304:1)\n' +    
+    '    at ABICoder.decodeParameters (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth-abi\\lib\\index.js:291:1)\n' +        
+    '    at Contract._decodeMethodReturn (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth\\node_modules\\web3-eth-contract\\lib\\index.js:493:1)\n' +
+    '    at Method.outputFormatter (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth\\node_modules\\web3-eth-contract\\lib\\index.js:800:1)\n' +
+    '    at Method.formatOutput (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth\\node_modules\\web3-core-method\\lib\\index.js:148:1)\n' +
+    '    at sendTxCallback (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-eth\\node_modules\\web3-core-method\\lib\\index.js:531:1)\n' +
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-core-requestmanager\\lib\\index.js:305:1\n' +
+    '    at C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\packages\\provider\\wrapper.js:123:1\n' +
+    '    at XMLHttpRequest.request.onreadystatechange (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\web3-providers-http\\lib\\index.js:98:1)\n' +
+    '    at XMLHttpRequestEventTarget.dispatchEvent (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request-event-target.js:34:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._setReadyState (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:208:1)\n' +
+    '    at XMLHttpRequest.exports.modules.996763.XMLHttpRequest._onHttpResponseEnd (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:318:1)\n' +
+    '    at IncomingMessage.<anonymous> (C:\\Users\\MSI\\AppData\\Roaming\\nvm\\v16.13.1\\node_modules\\truffle\\build\\webpack:\\node_modules\\xhr2-cookies\\dist\\xml-http-request.js:289:48)\n' +
+    '    at IncomingMessage.emit (node:events:402:35)\n' +
+    '    at IncomingMessage.emit (node:domain:537:15)\n' +
+    '    at endReadableNT (node:internal/streams/readable:1343:12)\n' +
+    '    at processTicksAndRejections (node:internal/process/task_queues:83:21)'
+}
+truffle(develop)> app.setPoolStatus(0, { from: accounts[2] })
+{
+  tx: '0x11dc4762e2d283a920257ef747e2f942a2d2cc8dcb58918ae91a412c974e7f29',
+  receipt: {
+    transactionHash: '0x11dc4762e2d283a920257ef747e2f942a2d2cc8dcb58918ae91a412c974e7f29',
+    transactionIndex: 0,
+    blockNumber: 4,
+    blockHash: '0x44832c0cfd46b50523048238228c0abc05110b2a2425a7da77cb88f3c7e454cc',
+    from: '0x631a8f19700562cab17a4e001e6f4c4471d4e541',
+    to: '0x408131a63516c01a9c87150da7ac1493805c0a0c',
+    cumulativeGasUsed: 21192,
+    gasUsed: 21192,
+    contractAddress: null,
+    logs: [],
+    logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+    status: true,
+    effectiveGasPrice: 3111774471,
+    type: '0x2',
+    rawLogs: []
+  },
+  logs: []
+}
+truffle(develop)> app.setPoolStatus(0, { from: accounts[2] })
+{
+  tx: '0x268cedfabe26742c51c1368101a067c685f1820dd019ce1048cddd507c8631b1',
+  receipt: {
+    transactionHash: '0x268cedfabe26742c51c1368101a067c685f1820dd019ce1048cddd507c8631b1',
+    transactionIndex: 0,
+    blockNumber: 5,
+    blockHash: '0x08cc441c0861776dce81c4c8d04b8710adf9825b89a99dc14f6ddbf0b886c1e8',
+    from: '0x631a8f19700562cab17a4e001e6f4c4471d4e541',
+    to: '0x408131a63516c01a9c87150da7ac1493805c0a0c',
+    cumulativeGasUsed: 21192,
+    gasUsed: 21192,
+    contractAddress: null,
+    logs: [],
+    logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+    status: true,
+    effectiveGasPrice: 3035784840,
+    type: '0x2',
+    rawLogs: []
+  },
+  logs: []
+}
+truffle(develop)> app.setPoolStatus(0, { from: accounts[0] })
+{
+  tx: '0x3351d33503003e710bfefd2a5262e3f80ef7a4e65f490da236c5d02d73469927',
+  receipt: {
+    transactionHash: '0x3351d33503003e710bfefd2a5262e3f80ef7a4e65f490da236c5d02d73469927',
+    transactionIndex: 0,
+    blockNumber: 6,
+    blockHash: '0x4f69ed6c16eb666a0ecd257f5a6f635435bc4fd5dce46accffd73231815cecb6',
+    from: '0x081017c48e3abe3c0b4e7d302e26544292f5b2a2',
+    to: '0x408131a63516c01a9c87150da7ac1493805c0a0c',
+    cumulativeGasUsed: 21192,
+    gasUsed: 21192,
+    contractAddress: null,
+    logs: [],
+    logsBloom: '0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',
+    status: true,
+    effectiveGasPrice: 2969234020,
+    type: '0x2',
+    rawLogs: []
+  },
+  logs: []
+}

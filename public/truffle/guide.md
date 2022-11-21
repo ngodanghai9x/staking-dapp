@@ -24,11 +24,11 @@ let app = await StakePool.deployed()
 app.deposit(Math.floor(Date.now() / 1000), 10, 3, { from: accounts[1], value: web3.utils.toWei('2.3', "ether"), gas: 500000 })
 app.getStakerInfo(accounts[1], { from: accounts[1] })
 
-app.getPoolInfo({ from: accounts[1] }).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
+app.getPoolInfo({ from: accounts[0] }).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
 app.setPoolStatus(0, { from: accounts[2] })
 app.letScamAndRun({ from: accounts[0] })
 
-var logEvent = app.LogSellArticle({}, {}).watch(function (error, event) { console.log("🚀 event", event) })
+var depositEvent = app.Deposit({}, {}).watch(function (error, event) { console.log("🚀 event", event) })
 ```
 
 https://docs.metamask.io/guide/create-dapp.html#basic-action-part-1

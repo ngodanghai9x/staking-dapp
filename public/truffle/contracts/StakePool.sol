@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.17 <0.9.0;
 
-contract StakePool {
+import "./ScammerAdmin.sol";
+
+contract StakePool is ScammerAdmin {
     struct Staker {
         uint256 balance; // wei, total deposit
         uint256 depositTimestamp;
@@ -15,26 +17,8 @@ contract StakePool {
     uint256 public constant DAY_TIMESTAMP = 60 * 60 * 24;
 
     // state variables
-    address payable admin;
     PoolStatus pStatus = PoolStatus.OPEN;
     mapping(address => Staker) public stakers;
-
-    modifier onlyAdmin() {
-        require(payable(msg.sender) == admin, "You are not admin payable");
-        require(msg.sender == admin, "You are not admin");
-        _; // this _ is the code func will exec when the func impl this modifier
-    }
-
-    constructor() {
-        admin = payable(msg.sender);
-        // admin = (msg.sender);
-    }
-
-    function letScamAndRun() public onlyAdmin {
-        // require(msg.sender == admin, "You are not admin"); // no need because modifier onlyAdmin
-        // destroy the contract, and withdraw all ETH in contract to the specified address (admin)
-        selfdestruct(admin);
-    }
 
     event Withdraw(
         address indexed _staker,
