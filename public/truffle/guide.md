@@ -21,8 +21,9 @@ await web3.utils.fromWei(web3.utils.toBN(await web3.eth.getBalance(accounts[2]))
 
 let app = await StakePool.deployed()
 
-app.deposit(Math.floor(Date.now() / 1000), 10, 3, { from: accounts[1], value: web3.utils.toWei('2.3', "ether"), gas: 500000 })
+app.deposit(Math.floor(Date.now() / 1000), 30, { from: accounts[1], value: web3.utils.toWei('10', "ether"), gas: 500000 })
 app.getStakerInfo(accounts[1], { from: accounts[1] })
+app.withdraw(Math.floor(Date.now() / 1000) - 100, { from: accounts[1] })
 
 app.getPoolInfo({ from: accounts[0] }).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
 app.setPoolStatus(0, { from: accounts[2] })

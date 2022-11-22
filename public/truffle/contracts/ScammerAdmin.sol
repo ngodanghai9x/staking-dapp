@@ -6,7 +6,7 @@ contract ScammerAdmin {
     address payable admin;
 
     modifier onlyAdmin() {
-        require(payable(msg.sender) == admin, "You are not admin payable");
+        // require(payable(msg.sender) == admin, "You are not admin payable");
         require(msg.sender == admin, "You are not admin");
         _; // this _ is the code func will exec when the func impl this modifier
     }

@@ -5,10 +5,15 @@ import "./ScammerAdmin.sol";
 
 contract StakePool is ScammerAdmin {
     struct Staker {
-        uint256 balance; // wei, total deposit
+        uint256 amount; // wei, total deposit
         uint256 depositTimestamp;
         uint256 apy; // percent
-        uint256 apyTerm; // months
+        uint256 apyTerm; // 30 90 270 days
+    }
+    struct Donater {
+        address wallet;
+        uint256 amount; // wei, total deposit
+        uint256 topUpTimestamp;
     }
     enum PoolStatus {
         LOCK,
@@ -19,59 +24,115 @@ contract StakePool is ScammerAdmin {
     // state variables
     PoolStatus pStatus = PoolStatus.OPEN;
     mapping(address => Staker) public stakers;
+    mapping(uint256 => Donater) public donaters;
+    uint256 donatersCount = 0;
 
+    // constructor() public {}
+
+    event TopUp(
+        address indexed _donater,
+        uint256 _amount,
+        uint256 _topUpTimestamp
+    );
+    event Deposit(
+        address indexed _staker,
+        uint256 _amount,
+        uint256 _depositTimestamp,
+        uint256 _apy,
+        uint256 _apyTerm
+    );
     event Withdraw(
         address indexed _staker,
-        uint256 _balance,
+        uint256 _amount,
         uint256 _depositTimestamp,
         uint256 _apy,
         uint256 _apyTerm,
         uint256 _reward
     );
-    event Deposit(
-        address indexed _staker,
-        uint256 _balance,
-        uint256 _depositTimestamp,
-        uint256 _apy,
-        uint256 _apyTerm
-    );
 
-    function getReward(uint256 timestamp) public view returns (uint256) {
-        // uint256 duration = now - timestamp;
-        uint256 timestampDiff = block.timestamp - timestamp;
-        uint256 daysDiff = timestampDiff / DAY_TIMESTAMP;
-        return daysDiff;
+    function getReward(Staker memory staker, uint256 withdrawTimestamp)
+        public
+        pure
+        returns (uint256)
+    {
+        uint256 daysDiff = (withdrawTimestamp - staker.depositTimestamp) /
+            DAY_TIMESTAMP;
+        require(
+            (withdrawTimestamp - staker.depositTimestamp) > DAY_TIMESTAMP,
+            "Ban chua stake du toi thieu 1 ngay"
+        );
+        require(daysDiff >= staker.apyTerm, "Chua den han rut tien");
+
+        uint256 reward = staker.amount * (1 + (staker.apy / 100));
+        return reward;
+    }
+
+    function getApy(uint256 apyTerm) public pure returns (uint256) {
+        if (apyTerm == 30) {
+            return 3;
+        }
+        if (apyTerm == 90) {
+            return 10;
+        }
+        if (apyTerm == 270) {
+            return 50;
+        }
+        // if (apyTerm >= 30 && apyTerm < 90) {
+        //     return 3;
+        // }
+        // if (apyTerm >= 90 && apyTerm < 270) {
+        //     return 10;
+        // }
+        // if (apyTerm >= 270) {
+        //     return 50;
+        // }
+        return 0;
+    }
+
+    function topUp() public payable {
+        // address payable contractPayable = payable(address(this));
+        // contractPayable.transfer(msg.value);
+        donatersCount++;
+        donaters[donatersCount] = Donater(
+            msg.sender,
+            msg.value,
+            block.timestamp
+        );
+        emit TopUp(msg.sender, msg.value, block.timestamp);
     }
 
     // stake1, 3, 9 tháng
     // stake1 là 3%, stake3 là 10%, stake 9 là 50% nh
-    function deposit(
-        uint256 depositTimestamp,
-        uint256 apy,
-        uint256 apyTerm
-    ) public payable {
-        // require(stakers[msg.sender].value === 0, "You already deposit");
+    function deposit(uint256 depositTimestamp, uint256 apyTerm) public payable {
+        uint256 apy = getApy(apyTerm);
+        require(stakers[msg.sender].amount == 0, "You already deposit");
+        require(apy > 0, "Invalid apy, apyTerm");
 
-        // string memory _balance = uint2str(msg.value);
+        // string memory _amount = uint2str(msg.value);
         // stakers[msg.sender] = Staker("2.3", 1668928830000, 10, 3);
         stakers[msg.sender] = Staker(msg.value, depositTimestamp, apy, apyTerm);
-        // address payable contractPayable = payable(address(this));
-        // contractPayable.transfer(msg.value);
-
         emit Deposit(msg.sender, msg.value, depositTimestamp, apy, apyTerm);
     }
 
-    function withdraw(uint256 timestamp) public payable {
+    function withdraw(uint256 withdrawTimestamp) public payable {
         Staker memory staker = stakers[msg.sender];
-        uint256 reward = getReward(timestamp);
+        uint256 reward = getReward(staker, withdrawTimestamp);
+        // uint256 reward = 10;
+        uint256 coinbase = address(this).balance;
 
-        // require(address(this).balance < reward, "You are scammed, leu leu");
+        require(
+            withdrawTimestamp <= block.timestamp,
+            "Invalid withdrawTimestamp"
+        );
+        require(staker.amount > 0, "You've not deposit yet");
+        require(coinbase >= reward, "You are scammed, leu leu");
+
+        payable(msg.sender).transfer(reward);
 
         delete stakers[msg.sender];
-
         emit Withdraw(
             msg.sender,
-            msg.value,
+            staker.amount,
             staker.depositTimestamp,
             staker.apy,
             staker.apyTerm,
