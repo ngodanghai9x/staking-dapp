@@ -20,6 +20,11 @@ await web3.utils.fromWei(web3.utils.toBN(await web3.eth.getBalance(accounts[1]))
 await web3.utils.fromWei(web3.utils.toBN(await web3.eth.getBalance(accounts[2])), "ether")
 
 let app = await StakePool.deployed()
+let token = await Bitcoin.deployed()
+
+token.balanceOf(accounts[0]);
+web3.utils.isBigNumber(token.balanceOf(accounts[0]));
+web3.utils.fromWei(token.balanceOf(accounts[0]), "ether");
 
 app.deposit(Math.floor(Date.now() / 1000), 30, { from: accounts[1], value: web3.utils.toWei('10', "ether"), gas: 500000 })
 app.getStakerInfo(accounts[1], { from: accounts[1] })

@@ -2,6 +2,8 @@
 pragma solidity >=0.8.17 <0.9.0;
 
 import "./ScammerAdmin.sol";
+import "./Bitcoin.sol";
+// import "./IERC20.sol";
 
 contract StakePool is ScammerAdmin {
     struct Staker {
@@ -24,11 +26,15 @@ contract StakePool is ScammerAdmin {
 
     // state variables
     PoolStatus pStatus = PoolStatus.OPEN;
+    Bitcoin token;
     mapping(address => Staker) public stakers;
     mapping(uint256 => Donater) public donaters;
     uint256 donatersCount = 0;
 
-    // constructor() public {}
+    constructor(address tokenAddress) {
+        super;
+        token = Bitcoin(tokenAddress);
+    }
 
     event TopUp(
         address indexed _donater,

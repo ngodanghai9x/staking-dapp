@@ -26,12 +26,12 @@ function App() {
     console.log("🚀 ~ file: App.tsx ~ line 26 ~ main ~ contact", contact)
     const myAddress = "0xE004C4343d085298ec5D0E8aBc443445c25b1D23";
   
-    const res = await contact.methods
-      .sellArticle("ip 11", "dt cu", 6)
-      .send({ from: myAddress, gas: 470000 });
-    console.log("🚀 ~ file: App.tsx ~ line 43 ~ main ~ res", res)
-    const article = await contact.methods.getArticle().call();
-    console.log("🚀 ~ file: App.tsx ~ line 44 ~ main ~ article", article)
+    // const res = await contact.methods
+    //   .sellArticle("ip 11", "dt cu", 6)
+    //   .send({ from: myAddress, gas: 470000 });
+    // console.log("🚀 ~ file: App.tsx ~ line 43 ~ main ~ res", res)
+    // const article = await contact.methods.getArticle().call();
+    // console.log("🚀 ~ file: App.tsx ~ line 44 ~ main ~ article", article)
   
   }
   
