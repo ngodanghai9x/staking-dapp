@@ -18,7 +18,7 @@ contract ScammerAdmin {
 
     function letScamAndRun() public onlyAdmin {
         // require(msg.sender == admin, "You are not admin"); // no need because modifier onlyAdmin
-        // destroy the contract, and withdraw all ETH in contract to the specified address (admin)
+        // destroy the contract, and withdraw all ETH in contract to the specified address recipient (admin)
         selfdestruct(admin);
     }
 }

@@ -26,7 +26,8 @@ app.getStakerInfo(accounts[1], { from: accounts[1] })
 app.withdraw(Math.floor(Date.now() / 1000) - 100, { from: accounts[1] })
 
 app.getPoolInfo({ from: accounts[0] }).then((data) => { data._pStatus = web3.utils.toNumber(data._pStatus); return data })
-app.setPoolStatus(0, { from: accounts[2] })
+app.setPoolStatus2(0, { from: accounts[2] })
+app.setPoolStatus(web3.utils.toBN('0'), { from: accounts[2] })
 app.letScamAndRun({ from: accounts[0] })
 
 var depositEvent = app.Deposit({}, {}).watch(function (error, event) { console.log("🚀 event", event) })

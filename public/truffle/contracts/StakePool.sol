@@ -19,7 +19,8 @@ contract StakePool is ScammerAdmin {
         LOCK,
         OPEN
     }
-    uint256 public constant DAY_TIMESTAMP = 60 * 60 * 24;
+    // uint256 public constant DAY_TIMESTAMP = 60 * 60 * 24;
+    uint256 public constant DAY_TIMESTAMP = 1 days;
 
     // state variables
     PoolStatus pStatus = PoolStatus.OPEN;
@@ -61,9 +62,10 @@ contract StakePool is ScammerAdmin {
             (withdrawTimestamp - staker.depositTimestamp) > DAY_TIMESTAMP,
             "Ban chua stake du toi thieu 1 ngay"
         );
-        require(daysDiff >= staker.apyTerm, "Chua den han rut tien");
+        // require(daysDiff >= staker.apyTerm, "Chua den han rut tien");
+        uint256 realApy = daysDiff >= staker.apyTerm ? staker.apy : 1;
 
-        uint256 reward = staker.amount * (1 + (staker.apy / 100));
+        uint256 reward = staker.amount * (realApy / 100) * (daysDiff / 365);
         return reward;
     }
 
@@ -114,20 +116,21 @@ contract StakePool is ScammerAdmin {
         emit Deposit(msg.sender, msg.value, depositTimestamp, apy, apyTerm);
     }
 
-    function withdraw(uint256 withdrawTimestamp) public payable {
+    function withdraw(uint256 withdrawTimestamp) public {
         Staker memory staker = stakers[msg.sender];
         uint256 reward = getReward(staker, withdrawTimestamp);
-        // uint256 reward = 10;
+        uint256 total = staker.amount + reward;
+        // uint256 total = 10;
         uint256 coinbase = address(this).balance;
 
+        require(staker.amount > 0, "You've not deposit yet");
         require(
             withdrawTimestamp <= block.timestamp,
             "Invalid withdrawTimestamp"
         );
-        require(staker.amount > 0, "You've not deposit yet");
-        require(coinbase >= reward, "You are scammed, leu leu");
+        require(coinbase >= total, "You are scammed, leu leu");
 
-        payable(msg.sender).transfer(reward);
+        payable(msg.sender).transfer(total);
 
         delete stakers[msg.sender];
         emit Withdraw(
@@ -140,12 +143,20 @@ contract StakePool is ScammerAdmin {
         );
     }
 
-    function setPoolStatus(uint256 _status) public onlyAdmin {
+    function adminWithdraw(uint256 value) public onlyAdmin {
+        payable(msg.sender).transfer(value);
+    }
+
+    function setPoolStatus2(uint256 _status) public onlyAdmin {
         if (_status == uint256(PoolStatus.LOCK)) {
             pStatus = PoolStatus.LOCK;
         } else if (_status == uint256(PoolStatus.OPEN)) {
             pStatus = PoolStatus.OPEN;
         }
+    }
+
+    function setPoolStatus(PoolStatus _status) public onlyAdmin {
+        pStatus = _status;
     }
 
     function getPoolInfo()
