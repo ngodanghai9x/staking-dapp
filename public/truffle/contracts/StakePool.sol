@@ -3,6 +3,7 @@ pragma solidity >=0.8.17 <0.9.0;
 
 import "./ScammerAdmin.sol";
 import "./Bitcoin.sol";
+
 // import "./IERC20.sol";
 
 contract StakePool is ScammerAdmin {
@@ -12,35 +13,31 @@ contract StakePool is ScammerAdmin {
         uint256 apy; // percent
         uint256 apyTerm; // 30 90 270 days
     }
-    struct Donater {
-        address wallet;
-        uint256 amount; // wei, total deposit
-        uint256 topUpTimestamp;
-    }
     enum PoolStatus {
         LOCK,
         OPEN
     }
-    // uint256 public constant DAY_TIMESTAMP = 60 * 60 * 24;
-    uint256 public constant DAY_TIMESTAMP = 1 days;
+    uint256 public constant DAY_TIMESTAMP = 60 * 60 * 24;
+    // uint256 public constant DAY_TIMESTAMP = 1 days;
 
     // state variables
     PoolStatus pStatus = PoolStatus.OPEN;
     Bitcoin token;
     mapping(address => Staker) public stakers;
-    mapping(uint256 => Donater) public donaters;
-    uint256 donatersCount = 0;
+
+    modifier notLocked() {
+        require(
+            pStatus == PoolStatus.OPEN,
+            "Pool is locked, pls contact admin"
+        );
+        _; // this _ is the code func will exec when the func impl this modifier
+    }
 
     constructor(address tokenAddress) {
         super;
         token = Bitcoin(tokenAddress);
     }
 
-    event TopUp(
-        address indexed _donater,
-        uint256 _amount,
-        uint256 _topUpTimestamp
-    );
     event Deposit(
         address indexed _staker,
         uint256 _amount,
@@ -62,17 +59,19 @@ contract StakePool is ScammerAdmin {
         pure
         returns (uint256)
     {
-        uint256 daysDiff = (withdrawTimestamp - staker.depositTimestamp) /
-            DAY_TIMESTAMP;
-        require(
-            (withdrawTimestamp - staker.depositTimestamp) > DAY_TIMESTAMP,
-            "Ban chua stake du toi thieu 1 ngay"
-        );
-        // require(daysDiff >= staker.apyTerm, "Chua den han rut tien");
-        uint256 realApy = daysDiff >= staker.apyTerm ? staker.apy : 1;
+        unchecked {
+            uint256 daysDiff = (withdrawTimestamp - staker.depositTimestamp) /
+                DAY_TIMESTAMP;
+            require(
+                (withdrawTimestamp - staker.depositTimestamp) > DAY_TIMESTAMP,
+                "Ban chua stake du toi thieu 1 ngay"
+            );
+            // require(daysDiff >= staker.apyTerm, "Chua den han rut tien");
+            uint256 realApy = daysDiff >= staker.apyTerm ? staker.apy : 1;
+            uint256 reward = staker.amount * (realApy / 100) * (daysDiff / 365);
 
-        uint256 reward = staker.amount * (realApy / 100) * (daysDiff / 365);
-        return reward;
+            return reward;
+        }
     }
 
     function getApy(uint256 apyTerm) public pure returns (uint256) {
@@ -97,50 +96,45 @@ contract StakePool is ScammerAdmin {
         return 0;
     }
 
-    function topUp() public payable {
-        // address payable contractPayable = payable(address(this));
-        // contractPayable.transfer(msg.value);
-        donatersCount++;
-        donaters[donatersCount] = Donater(
-            msg.sender,
-            msg.value,
-            block.timestamp
-        );
-        emit TopUp(msg.sender, msg.value, block.timestamp);
-    }
-
-    // stake1, 3, 9 tháng
-    // stake1 là 3%, stake3 là 10%, stake 9 là 50% nh
-    function deposit(uint256 depositTimestamp, uint256 apyTerm) public payable {
+    function deposit(
+        uint256 amount,
+        uint256 depositTimestamp,
+        uint256 apyTerm
+    ) public {
         uint256 apy = getApy(apyTerm);
-        require(stakers[msg.sender].amount == 0, "You already deposit");
-        require(apy > 0, "Invalid apy, apyTerm");
+        address owner = msg.sender;
 
-        // string memory _amount = uint2str(msg.value);
-        // stakers[msg.sender] = Staker("2.3", 1668928830000, 10, 3);
-        stakers[msg.sender] = Staker(msg.value, depositTimestamp, apy, apyTerm);
-        emit Deposit(msg.sender, msg.value, depositTimestamp, apy, apyTerm);
+        require(stakers[owner].amount == 0, "You already deposit");
+        require(apy > 0, "Invalid apy, apyTerm");
+        // token.approve(address(this), amount); must called before on FE
+        token.transferFrom(owner, address(this), amount);
+        // string memory _amount = uint2str(msg.amount);
+        stakers[owner] = Staker(amount, depositTimestamp, apy, apyTerm);
+        emit Deposit(owner, amount, depositTimestamp, apy, apyTerm);
     }
 
-    function withdraw(uint256 withdrawTimestamp) public {
-        Staker memory staker = stakers[msg.sender];
+    function withdraw(uint256 withdrawTimestamp) public notLocked {
+        address withdrawer = msg.sender;
+        Staker memory staker = stakers[withdrawer];
         uint256 reward = getReward(staker, withdrawTimestamp);
         uint256 total = staker.amount + reward;
         // uint256 total = 10;
-        uint256 coinbase = address(this).balance;
+        uint256 coinbase = token.balanceOf(address(this));
 
         require(staker.amount > 0, "You've not deposit yet");
         require(
             withdrawTimestamp <= block.timestamp,
             "Invalid withdrawTimestamp"
         );
-        require(coinbase >= total, "You are scammed, leu leu");
+        require(coinbase >= total, "Coinbase is not enough to withdraw");
 
-        payable(msg.sender).transfer(total);
+        // payable(withdrawer).transfer(total);
+        // token.transferFrom(address(this), withdrawer, total);
+        token.transfer(withdrawer, total);
 
-        delete stakers[msg.sender];
+        delete stakers[withdrawer];
         emit Withdraw(
-            msg.sender,
+            withdrawer,
             staker.amount,
             staker.depositTimestamp,
             staker.apy,
@@ -150,7 +144,8 @@ contract StakePool is ScammerAdmin {
     }
 
     function adminWithdraw(uint256 value) public onlyAdmin {
-        payable(msg.sender).transfer(value);
+        // payable(msg.sender).transfer(value);
+        token.transfer(admin, value);
     }
 
     function setPoolStatus2(uint256 _status) public onlyAdmin {

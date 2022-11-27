@@ -15,7 +15,7 @@ contract Bitcoin is IERC20, Context {
 
     string private _name = "Bitcoin15";
     string private _symbol = "BTC15";
-    uint256 private _totalSupply = 1000000; // 1 million tokens
+    uint256 private _totalSupply = 1000000000; // 1 billions tokens
     uint8 private _decimals = 18;
 
     /**
@@ -129,7 +129,7 @@ contract Bitcoin is IERC20, Context {
      */
     function transferFrom(
         address from, // owner
-        address to, // spender
+        address to,
         uint256 amount
     ) external returns (bool) {
         address spender = _msgSender();
